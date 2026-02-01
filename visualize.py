@@ -63,6 +63,7 @@ def plot_stats(df):
     """Create plots of the collected stats."""
     try:
         import matplotlib.pyplot as plt
+        import matplotlib.dates as mdates
         import matplotlib.ticker as ticker
     except ImportError:
         print("matplotlib is required but not installed. Install with: pip install pandas matplotlib")
@@ -75,39 +76,59 @@ def plot_stats(df):
     fig, axes = plt.subplots(2, 2, figsize=(15, 10))
     fig.suptitle('Moltbook Statistics Over Time', fontsize=16)
     
+    # Define date formatters for x-axis
+    date_formatter = mdates.DateFormatter('%m-%d\n%H:%M')  # Month-Day Hour:Minute on two lines
+    major_locator = mdates.DayLocator(interval=1)  # Major ticks for each day
+    
     # AI Agents
     axes[0, 0].plot(df['datetime'], df['ai_agents'], marker='o', linestyle='-', color='blue')
     axes[0, 0].set_title('AI Agents')
-    axes[0, 0].set_xlabel('Date')
+    axes[0, 0].set_xlabel('Date (MM-DD HH:MM)')
     axes[0, 0].set_ylabel('Count')
     axes[0, 0].grid(True, alpha=0.3)
+    # Format x-axis for date/time
+    axes[0, 0].xaxis.set_major_formatter(date_formatter)
+    axes[0, 0].xaxis.set_major_locator(major_locator)
+    axes[0, 0].tick_params(axis='x', rotation=45)
     # Format y-axis for large numbers (K for thousands, M for millions)
     axes[0, 0].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K' if x >= 1e3 else f'{int(x)}'))
     
     # Submolts
     axes[0, 1].plot(df['datetime'], df['submolts'], marker='o', linestyle='-', color='green')
     axes[0, 1].set_title('Submolts')
-    axes[0, 1].set_xlabel('Date')
+    axes[0, 1].set_xlabel('Date (MM-DD HH:MM)')
     axes[0, 1].set_ylabel('Count')
     axes[0, 1].grid(True, alpha=0.3)
+    # Format x-axis for date/time
+    axes[0, 1].xaxis.set_major_formatter(date_formatter)
+    axes[0, 1].xaxis.set_major_locator(major_locator)
+    axes[0, 1].tick_params(axis='x', rotation=45)
     # Format y-axis for large numbers
     axes[0, 1].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K' if x >= 1e3 else f'{int(x)}'))
     
     # Posts
     axes[1, 0].plot(df['datetime'], df['posts'], marker='o', linestyle='-', color='red')
     axes[1, 0].set_title('Posts')
-    axes[1, 0].set_xlabel('Date')
+    axes[1, 0].set_xlabel('Date (MM-DD HH:MM)')
     axes[1, 0].set_ylabel('Count')
     axes[1, 0].grid(True, alpha=0.3)
+    # Format x-axis for date/time
+    axes[1, 0].xaxis.set_major_formatter(date_formatter)
+    axes[1, 0].xaxis.set_major_locator(major_locator)
+    axes[1, 0].tick_params(axis='x', rotation=45)
     # Format y-axis for large numbers
     axes[1, 0].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K' if x >= 1e3 else f'{int(x)}'))
     
     # Comments
     axes[1, 1].plot(df['datetime'], df['comments'], marker='o', linestyle='-', color='orange')
     axes[1, 1].set_title('Comments')
-    axes[1, 1].set_xlabel('Date')
+    axes[1, 1].set_xlabel('Date (MM-DD HH:MM)')
     axes[1, 1].set_ylabel('Count')
     axes[1, 1].grid(True, alpha=0.3)
+    # Format x-axis for date/time
+    axes[1, 1].xaxis.set_major_formatter(date_formatter)
+    axes[1, 1].xaxis.set_major_locator(major_locator)
+    axes[1, 1].tick_params(axis='x', rotation=45)
     # Format y-axis for large numbers
     axes[1, 1].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K' if x >= 1e3 else f'{int(x)}'))
     
