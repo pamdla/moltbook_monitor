@@ -13,7 +13,7 @@ from scraper import MoltbookStatsScraper
 
 
 class MoltbookMonitor:
-    def __init__(self, interval_minutes=60):
+    def __init__(self, interval_minutes=5):
         self.interval = interval_minutes * 60  # Convert to seconds
         self.running = True
         self.scraper = MoltbookStatsScraper()

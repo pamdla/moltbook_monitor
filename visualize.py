@@ -63,6 +63,7 @@ def plot_stats(df):
     """Create plots of the collected stats."""
     try:
         import matplotlib.pyplot as plt
+        import matplotlib.ticker as ticker
     except ImportError:
         print("matplotlib is required but not installed. Install with: pip install pandas matplotlib")
         return
@@ -80,6 +81,8 @@ def plot_stats(df):
     axes[0, 0].set_xlabel('Date')
     axes[0, 0].set_ylabel('Count')
     axes[0, 0].grid(True, alpha=0.3)
+    # Format y-axis for large numbers (K for thousands, M for millions)
+    axes[0, 0].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K' if x >= 1e3 else f'{int(x)}'))
     
     # Submolts
     axes[0, 1].plot(df['datetime'], df['submolts'], marker='o', linestyle='-', color='green')
@@ -87,6 +90,8 @@ def plot_stats(df):
     axes[0, 1].set_xlabel('Date')
     axes[0, 1].set_ylabel('Count')
     axes[0, 1].grid(True, alpha=0.3)
+    # Format y-axis for large numbers
+    axes[0, 1].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K' if x >= 1e3 else f'{int(x)}'))
     
     # Posts
     axes[1, 0].plot(df['datetime'], df['posts'], marker='o', linestyle='-', color='red')
@@ -94,6 +99,8 @@ def plot_stats(df):
     axes[1, 0].set_xlabel('Date')
     axes[1, 0].set_ylabel('Count')
     axes[1, 0].grid(True, alpha=0.3)
+    # Format y-axis for large numbers
+    axes[1, 0].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K' if x >= 1e3 else f'{int(x)}'))
     
     # Comments
     axes[1, 1].plot(df['datetime'], df['comments'], marker='o', linestyle='-', color='orange')
@@ -101,10 +108,14 @@ def plot_stats(df):
     axes[1, 1].set_xlabel('Date')
     axes[1, 1].set_ylabel('Count')
     axes[1, 1].grid(True, alpha=0.3)
+    # Format y-axis for large numbers
+    axes[1, 1].yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, p: f'{x/1e6:.1f}M' if x >= 1e6 else f'{x/1e3:.1f}K' if x >= 1e3 else f'{int(x)}'))
     
     plt.tight_layout()
+    # Also save as PNG in addition to SVG
+    plt.savefig('moltbook_stats.svg', dpi=300, bbox_inches='tight')
     plt.savefig('moltbook_stats.png', dpi=300, bbox_inches='tight')
-    print("Chart saved as moltbook_stats.png")
+    print("Charts saved as moltbook_stats.png and moltbook_stats.svg")
 
 
 def print_summary(df):
