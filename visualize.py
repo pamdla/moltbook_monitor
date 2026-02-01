@@ -21,7 +21,40 @@ def load_data(csv_file="data/moltbook_stats.csv"):
         return None
     
     df = pd.read_csv(csv_file)
-    df['datetime'] = pd.to_datetime(df['datetime'])
+    
+    # Handle potential datetime parsing issues - fix malformed datetime strings
+    def safe_parse_datetime(dt_str):
+        try:
+            # Handle the specific error case: "second must be in 0..59: 2026-02-01T23:20:47854"
+            # This appears to be a malformed timestamp with milliseconds in wrong position
+            if isinstance(dt_str, str) and 'T' in dt_str:
+                # Check if the format looks like "2026-02-01T23:20:47854" (wrong millisecond placement)
+                parts = dt_str.split('T')
+                if len(parts) == 2:
+                    date_part = parts[0]
+                    time_part = parts[1]
+                    # If time part has more than expected digits after colon, it's malformed
+                    if '.' not in time_part and ':' in time_part:
+                        # Try to fix formats like "23:20:47854" by assuming the last 3 digits are millis
+                        time_components = time_part.split(':')
+                        if len(time_components) == 3 and len(time_components[2]) > 2:
+                            # This is likely the problematic format - last 3 digits are milliseconds
+                            sec_milli = time_components[2]
+                            seconds = sec_milli[:2]
+                            milliseconds = sec_milli[2:]
+                            if milliseconds.isdigit() and len(milliseconds) <= 6:  # Up to microsecond precision
+                                corrected_time = f"{time_components[0]}:{time_components[1]}:{seconds}.{milliseconds}"
+                                dt_str = f"{date_part}T{corrected_time}"
+            return pd.to_datetime(dt_str, format='ISO8601', errors='coerce')
+        except:
+            return pd.NaT
+    
+    # Apply the safe parser to the datetime column
+    df['datetime'] = df['datetime'].apply(safe_parse_datetime)
+    
+    # Drop rows with NaT (Not a Time) values
+    df = df.dropna(subset=['datetime'])
+    
     df = df.sort_values('datetime')
     return df
 
